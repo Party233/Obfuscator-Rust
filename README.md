@@ -1,6 +1,6 @@
 # OLLVM-Rustc
 
-This repository is a fork of [Obfuscator-LLVM](https://github.com/obfuscator-llvm/obfuscator) and [Obfuscator-LLVM-16.0](https://github.com/joaovarelas/Obfuscator-LLVM-16.0), updated to support **LLVM 21.0** and **Rust 1.92.0**.
+This repository acts as a specialized fork of [Obfuscator-LLVM](https://github.com/obfuscator-llvm/obfuscator) and [Obfuscator-LLVM-16.0](https://github.com/joaovarelas/Obfuscator-LLVM-16.0), engineered to support **LLVM 21.0** and **Rust 1.92.0**.
 
 ---
 
@@ -8,20 +8,19 @@ This repository is a fork of [Obfuscator-LLVM](https://github.com/obfuscator-llv
 
 ### 1. Build & Enter Docker Environment
 
-First, build the Docker image and start the container, mounting your cargo project directory.
+Build the Docker image and start the container by mounting your Cargo project directory to access your code inside the container.
 
 ```bash
 # Build the image
-DOCKER_BUILDKIT=1 docker build -t ollvm-rustc-1.92.0:latest .
+DOCKER_BUILDKIT=1 docker build -t ollvm-rustc:latest .
 
-# Run the container (replace /path/to/cargo/proj with your actual path)
-docker run -v /path/to/cargo/proj:/workspace/ -it ollvm-rustc-1.92.0:latest /bin/bash
-
+# Run the container (replace /path/to/cargo/proj with your actual project path)
+docker run -v /path/to/cargo/proj:/projects/ -it ollvm-rustc:latest /bin/bash
 ```
 
 ### 2. Compile with Obfuscation
 
-Once inside the container, you can build your project. Compiled binaries will be placed in the `./target` directory.
+Once inside the container, you can proceed to build your project. The compiled binaries will be output to the `./target` directory.
 
 **Target: Windows (GNU)**
 
@@ -33,7 +32,6 @@ cargo rustc --target x86_64-pc-windows-gnu --release --jobs 1 -- \
   -Cpanic=abort \
   -Copt-level=3 \
   -Cllvm-args=-enable-allobf
-
 ```
 
 **Target: Linux**
@@ -45,20 +43,25 @@ cargo rustc --target x86_64-unknown-linux-gnu --release -- \
   -Cpanic=abort \
   -Copt-level=3 \
   -Cllvm-args=-enable-allobf
-
 ```
 
-> **⚠️ Warning on `-enable-allobf**`
-> Enabling all obfuscation features simultaneously often leads to compilation failures or **Out of Memory (OOM)** errors. It is recommended to enable specific features individually.
-> You can use `-indibran-max-bbs=<number>` or `-cffobf-max-bbs=<number>` to reduce the obfuscation intensity to save memory.
+> [!WARNING]
+> **Performance & Stability Warning**
+>
+> Enabling all obfuscation features simultaneously (`-enable-allobf`) often leads to compilation failures or **Out of Memory (OOM)** errors. It is highly recommended to enable specific features individually.
+>
+> To mitigate memory usage, you can limit the intensity of certain passes:
+> - `-indibran-max-bbs=<number>`
+> - `-cffobf-max-bbs=<number>`
+
 ---
 
-## 🛡️ Available OLLVM Features
+## 🛡️ Available Features
 
-Current Rust OLLVM is based on [Hikari](https://github.com/61bcdefg/Hikari-LLVM15-Core/blob/main/Obfuscation.cpp).
+The current Rust OLLVM implementation is based on [Hikari](https://github.com/61bcdefg/Hikari-LLVM15-Core/blob/main/Obfuscation.cpp).
 
 | Feature | Flag | Status |
-| --- | --- | --- |
+| :--- | :--- | :--- |
 | **Bogus Control Flow** | `-enable-bcfobf` | ✅ Working |
 | **Basic Block Splitting** | `-enable-splitobf` | ✅ Working |
 | **Instruction Substitution** | `-enable-subobf` | ✅ Working |
@@ -74,17 +77,16 @@ Current Rust OLLVM is based on [Hikari](https://github.com/61bcdefg/Hikari-LLVM1
 
 ---
 
-## 🛠️ Development & Notes
+## 🛠️ Development & Changelog
 
-Recent fixes and adjustments for the Rust ecosystem:
+Recent enhancements and fixes tailored for the Rust ecosystem:
 
-* **Fixed:** String Encryption Pass for Rust.
-* **Fixed:** Function Wrapper for Rust.
-
+*   **Fixed:** String Encryption Pass for Rust compatibility.
+*   **Fixed:** Function Wrapper for Rust compatibility.
 
 ---
 
 ## 👥 Contributors
 
-* [Original Contributors](https://github.com/joaovarelas/Obfuscator-LLVM-16.0)
-* [@SoulDog Research](https://github.com/SoulDog-Research)
+*   [Original Contributors](https://github.com/joaovarelas/Obfuscator-LLVM-16.0)
+*   [@SoulDog Research](https://github.com/SoulDog-Research)
